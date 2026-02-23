@@ -60,6 +60,8 @@ Any agent that modifies repository files must record the change in this file bef
 - If no files are changed, no log entry is required.
 
 ## Change Log
+- 2026-02-23 | Codex | `src/services/autoSavings.service.js`, `src/middlewares/cronAuth.middleware.js`, `src/controllers/internal.controller.js`, `src/routes/internal.routes.js`, `src/app.js`, `src/jobs/autoSavings.job.js`, `vercel.json`, `README.md` | Added secured internal auto-savings trigger endpoint and Vercel Cron schedule, reusing one service for both scheduled and manual execution.
+- 2026-02-23 | Codex | `src/app.js`, `src/index.js`, `api/index.js`, `vercel.json`, `README.md` | Added Vercel serverless deployment setup by extracting Express app, adding API handler and routing config, and documenting Vercel deploy flow and cron limitation.
 - 2026-02-23 | Codex | `src/index.js` | Added `GET /` and `GET /health` endpoints returning 200 for Railway health checks to prevent startup recycle/502.
 - 2026-02-23 | Codex | `package.json`, `README.md` | Fixed Railway Prisma startup issue by adding `postinstall` generate flow, moving runtime deps (`prisma`, `dotenv`) to dependencies, and adding troubleshooting steps.
 - 2026-02-23 | Codex | `src/index.js`, `package.json`, `README.md` | Prepared Railway deployment: added `PORT` support, `start`/Prisma scripts, and step-by-step Railway tutorial.

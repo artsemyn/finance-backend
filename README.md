@@ -25,10 +25,13 @@ Backend REST API untuk aplikasi manajemen keuangan pribadi.
 finance-backend/
 |-- lib/
 |   `-- prisma.js
+|-- api/
+|   `-- index.js
 |-- prisma/
 |   |-- schema.prisma
 |   `-- migrations/
 |-- src/
+|   |-- app.js
 |   |-- controllers/
 |   |-- jobs/
 |   |   `-- autoSavings.job.js
@@ -46,6 +49,7 @@ Buat file `.env`:
 ```env
 DATABASE_URL="postgresql://<user>:<password>@<host>/<db>?sslmode=require"
 JWT_SECRET="your_jwt_secret"
+CRON_SECRET="your_random_secret_for_scheduled_jobs"
 ```
 
 ## Instalasi dan Menjalankan Project
@@ -191,6 +195,28 @@ Troubleshooting Prisma (`Cannot find module '.prisma/client/default'`):
 ```bash
 npm run prisma:generate
 ```
+
+## Deploy ke Vercel
+1. Push project ke GitHub.
+2. Di Vercel, klik **Add New -> Project**, lalu import repo ini.
+3. Set environment variables di Vercel:
+```env
+DATABASE_URL=postgresql://...
+JWT_SECRET=your_secret
+CRON_SECRET=your_random_secret_for_scheduled_jobs
+```
+4. Deploy, lalu test endpoint:
+```text
+GET /health
+POST /auth/login
+```
+
+Catatan Vercel:
+- Semua route diarahkan ke `api/index.js` (lihat `vercel.json`).
+- Auto-savings dijalankan melalui Vercel Cron harian (`0 0 * * *`) ke endpoint internal:
+  `GET /internal/auto-savings/run`
+- Endpoint internal diproteksi `CRON_SECRET` (middleware cek bearer token).
+- Vercel Cron akan lolos autentikasi jika environment `CRON_SECRET` di-set.
 
 ## Catatan
 - Port server menggunakan `process.env.PORT` dengan fallback `3000`.
