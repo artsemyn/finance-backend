@@ -60,5 +60,6 @@ Any agent that modifies repository files must record the change in this file bef
 - If no files are changed, no log entry is required.
 
 ## Change Log
+- 2026-02-23 | Codex | `package.json`, `README.md` | Fixed Railway Prisma startup issue by adding `postinstall` generate flow, moving runtime deps (`prisma`, `dotenv`) to dependencies, and adding troubleshooting steps.
 - 2026-02-23 | Codex | `src/index.js`, `package.json`, `README.md` | Prepared Railway deployment: added `PORT` support, `start`/Prisma scripts, and step-by-step Railway tutorial.
 - 2026-02-23 | Codex | `AGENTS.md` | Added mandatory agent change logging policy and log section.

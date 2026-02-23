@@ -181,7 +181,16 @@ npm run prisma:migrate:deploy
 Catatan Railway:
 - Railway otomatis inject `PORT`, dan app ini sudah membaca `process.env.PORT`.
 - `node-cron` akan berjalan selama service backend aktif.
+- Prisma Client digenerate saat install dependency melalui script `postinstall`.
 - Setelah deploy pertama, rotate semua secret jika sebelumnya pernah tersimpan di `.env` lokal yang terpublikasi.
+
+Troubleshooting Prisma (`Cannot find module '.prisma/client/default'`):
+1. Pastikan deploy memakai commit terbaru (yang sudah punya `postinstall`).
+2. Trigger redeploy dengan **Clear build cache**.
+3. Jika perlu, jalankan manual di Railway shell:
+```bash
+npm run prisma:generate
+```
 
 ## Catatan
 - Port server menggunakan `process.env.PORT` dengan fallback `3000`.
