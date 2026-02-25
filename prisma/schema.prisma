@@ -7,19 +7,20 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  password     String
-  createdAt    DateTime      @default(now())
-  reminders    Reminder[]
-  savingsGoals SavingsGoal[]
-  transactions Transaction[]
+  id                    String                @id @default(uuid())
+  email                 String                @unique
+  password              String
+  createdAt             DateTime              @default(now())
+  reminders             Reminder[]
+  savingsGoals          SavingsGoal[]
+  transactions          Transaction[]
+  transactionCategories TransactionCategory[]
 }
 
 model Transaction {
   id        String   @id @default(uuid())
   title     String
-  amount    Float
+  amount    Decimal
   type      String
   category  String?
   date      DateTime
@@ -53,4 +54,15 @@ model Reminder {
   userId         String
   createdAt      DateTime @default(now())
   user           User     @relation(fields: [userId], references: [id])
+}
+
+model TransactionCategory {
+  id        String   @id @default(uuid())
+  name      String
+  type      String
+  isActive  Boolean  @default(true)
+  userId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
 }
