@@ -19,6 +19,7 @@ Backend REST API untuk aplikasi manajemen keuangan pribadi.
 - CRUD reminder
 - Endpoint reminder jatuh tempo terdekat (`/reminders/upcoming`)
 - Auto-savings bulanan via cron job
+- Web documentation page with Vercel Web Analytics (`/docs`)
 
 ## Struktur Proyek
 ```text
@@ -30,6 +31,8 @@ finance-backend/
 |-- prisma/
 |   |-- schema.prisma
 |   `-- migrations/
+|-- public/
+|   `-- index.html
 |-- src/
 |   |-- app.js
 |   |-- controllers/
@@ -80,6 +83,9 @@ Authorization: Bearer <token>
 ```
 
 ## API Endpoints
+
+### Documentation
+- `GET /docs` - Interactive API documentation page with Vercel Web Analytics
 
 ### Auth
 - `POST /auth/register`
@@ -217,6 +223,24 @@ Catatan Vercel:
   `GET /internal/auto-savings/run`
 - Endpoint internal diproteksi `CRON_SECRET` (middleware cek bearer token).
 - Vercel Cron akan lolos autentikasi jika environment `CRON_SECRET` di-set.
+- Vercel Web Analytics akan otomatis aktif pada halaman `/docs` setelah diaktifkan di dashboard Vercel.
+
+## Vercel Web Analytics
+Project ini sudah dilengkapi dengan Vercel Web Analytics pada halaman dokumentasi (`/docs`). 
+
+Untuk mengaktifkan analytics:
+1. Di Vercel dashboard, pilih project Anda
+2. Klik tab **Analytics** 
+3. Klik **Enable** untuk mengaktifkan Web Analytics
+4. Setelah deployment berikutnya, analytics akan mulai merekam visitor data pada `/docs`
+
+Analytics akan melacak:
+- Page views dan visitor metrics
+- Browser dan device information
+- Geographic data
+- Referral sources
+
+Catatan: Analytics hanya aktif di production deployment Vercel, tidak di development lokal.
 
 ## Catatan
 - Port server menggunakan `process.env.PORT` dengan fallback `3000`.
