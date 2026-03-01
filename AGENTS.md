@@ -60,6 +60,7 @@ Any agent that modifies repository files must record the change in this file bef
 - If no files are changed, no log entry is required.
 
 ## Change Log
+- 2026-03-01 | Codex | `src/app.js`, `public/index.html`, `AGENTS.md` | Removed public static file serving and deleted the `/docs` HTML page.
 - 2026-03-01 | Vade | `src/app.js`, `public/index.html`, `package.json`, `package-lock.json`, `README.md`, `AGENTS.md` | Added Vercel Web Analytics support with interactive documentation page at `/docs` endpoint, static file serving, and updated documentation.
 - 2026-03-01 | Codex | `src/controllers/auth.controller.js`, `AGENTS.md` | Updated `/auth/register` to return a JWT token for immediate post-registration login and removed the hashed password from the register response.
 - 2026-02-25 | Codex | `src/services/transaction.service.js`, `prisma/schema.prisma`, `prisma/migrations/20260225120000_change_transaction_amount_to_decimal/migration.sql`, `src/__tests__/transaction.service.test.js`, `package.json` | Refactored transaction create/update validation for strict amount/type/date handling, switched transaction amount to Decimal with migration, and added unit tests for amount/type/date edge cases.
