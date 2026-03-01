@@ -18,7 +18,21 @@ exports.register = async (req, res) => {
             }
         })
 
-        res.json({ message: "User created", user })
+        const token = jwt.sign(
+            { userId: user.id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        )
+
+        res.json({
+            message: "User created",
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                createdAt: user.createdAt
+            }
+        })
     } catch (error) {
         res.status(400).json({ error: "User already exists"})
     }
