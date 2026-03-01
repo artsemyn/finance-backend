@@ -60,6 +60,7 @@ Any agent that modifies repository files must record the change in this file bef
 - If no files are changed, no log entry is required.
 
 ## Change Log
+- 2026-03-01 | Vade | `src/app.js`, `public/index.html`, `package.json`, `package-lock.json`, `README.md`, `AGENTS.md` | Added Vercel Web Analytics support with interactive documentation page at `/docs` endpoint, static file serving, and updated documentation.
 - 2026-02-25 | Codex | `src/services/transaction.service.js`, `prisma/schema.prisma`, `prisma/migrations/20260225120000_change_transaction_amount_to_decimal/migration.sql`, `src/__tests__/transaction.service.test.js`, `package.json` | Refactored transaction create/update validation for strict amount/type/date handling, switched transaction amount to Decimal with migration, and added unit tests for amount/type/date edge cases.
 - 2026-02-23 | Codex | `src/services/autoSavings.service.js`, `src/middlewares/cronAuth.middleware.js`, `src/controllers/internal.controller.js`, `src/routes/internal.routes.js`, `src/app.js`, `src/jobs/autoSavings.job.js`, `vercel.json`, `README.md` | Added secured internal auto-savings trigger endpoint and Vercel Cron schedule, reusing one service for both scheduled and manual execution.
 - 2026-02-23 | Codex | `src/app.js`, `src/index.js`, `api/index.js`, `vercel.json`, `README.md` | Added Vercel serverless deployment setup by extracting Express app, adding API handler and routing config, and documenting Vercel deploy flow and cron limitation.
