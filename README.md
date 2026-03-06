@@ -2,26 +2,30 @@
 
 Backend REST API untuk aplikasi manajemen keuangan pribadi.
 
-## Tech Stack
-- Node.js
-- Express 5
-- Prisma ORM + PostgreSQL (Neon)
-- JWT Authentication
-- bcrypt
-- node-cron
+## 🛠️ Tech Stack & Arsitektur
+
+Proyek ini menggunakan kombinasi teknologi modern untuk memastikan performa tinggi, skalabilitas, dan keamanan data:
+
+| Komponen | Teknologi | Alasan & Fungsi |
+| :--- | :--- | :--- |
+| **Runtime** | **Node.js** | Lingkungan eksekusi JavaScript di sisi server yang asinkron dan efisien. |
+| **Web Framework** | **Express 5** | Versi terbaru dari Express yang memberikan performa lebih baik dan penanganan *error* pada fungsi asinkron yang lebih stabil. |
+| **Database ORM** | **Prisma** | *Object-Relational Mapper* (ORM) yang menjamin keamanan tipe (*type-safety*) dan memudahkan migrasi serta manipulasi database PostgreSQL. |
+| **Database** | **PostgreSQL** | Sistem manajemen database relasional yang tangguh untuk menyimpan data transaksi dan user dengan integritas tinggi. |
+| **Security** | **JWT & Bcrypt** | **JWT** digunakan untuk autentikasi stateless (aman tanpa session), sedangkan **Bcrypt** digunakan untuk *hashing* password user sebelum disimpan. |
+| **Scheduling** | **Node-cron** | Library untuk menjalankan tugas otomatis (*cron jobs*), digunakan untuk fitur *auto-savings* harian. |
+| **Testing** | **Jest** | Framework pengujian JavaScript untuk memastikan logika bisnis di level *service* berjalan dengan benar (Unit Testing). |
+| **Analytics** | **Vercel Analytics** | Memberikan wawasan (*insight*) mengenai penggunaan halaman dokumentasi API (`/docs`). |
 
 ## Fitur
-- Register, login, dan endpoint profil user (`/auth/me`)
-- CRUD transaksi
-- Ringkasan bulanan transaksi (`/transactions/summary?month=YYYY-MM`)
-- CRUD target tabungan
-- Update progress target tabungan
-- CRUD reminder
-- Endpoint reminder jatuh tempo terdekat (`/reminders/upcoming`)
-- Auto-savings bulanan via cron job
-- Web documentation page with Vercel Web Analytics (`/docs`)
-
-## Struktur Proyek
+ **Autentikasi Aman:** Sistem registrasi dan login menggunakan JWT & bcrypt.
+ **Manajemen Transaksi:** Pencatatan pemasukan/pengeluaran dengan dukungan kategori dinamis.
+ **Kategori Kustom:** Kelola kategori transaksi (Gaji, Makanan, Transportasi, dll) per pengguna.
+ **Target Tabungan (Savings Goals):** Pantau progres tabungan dengan fitur *Auto-Savings* bulanan.
+ **Pengingat Tagihan (Reminders):** Sistem pengingat untuk tagihan jatuh tempo terdekat.
+ **Otomatisasi Cron:** Pemrosesan otomatis tabungan bulanan (mendukung Vercel Cron & Local Cron).
+ **Analitik Terintegrasi:** Dokumentasi interaktif dengan Vercel Web Analytics.
+## 📂 Struktur Proyek
 ```text
 finance-backend/
 |-- lib/
@@ -44,6 +48,99 @@ finance-backend/
 |   `-- index.js
 |-- .env
 `-- package.json
+```
+
+## 🔄 Alur Jalannya API (Data Flow)
+
+Proyek ini mengikuti arsitektur **Controller-Service-Repository (Prisma)**. Berikut adalah alur data dari saat Client mengirimkan request hingga menerima response:
+
+```mermaid
+graph TD
+    A[Client Request] -->|HTTP Method, Body, JWT| B[Express Router]
+    B --> C{Middleware}
+    C -->|Auth Check| D[Auth Middleware]
+    C -->|Error?| E[Error Middleware]
+    D -->|Valid| F[Controller]
+    F -->|Process Input| G[Service]
+    G -->|Business Logic| H[Prisma ORM]
+    H -->|Query| I[(PostgreSQL)]
+    I -->|Data| H
+    H -->|Result| G
+    G -->|Data/Error| F
+    F -->|JSON Response| J[Client Output]
+    E -->|Error Message| J
+```
+
+### Penjelasan Langkah:
+1.  **Input (Client Request):** Client mengirimkan permintaan (misal: `POST /transactions`) dengan membawa data di `body` dan token akses di `header`.
+2.  **Routing & Middleware:** 
+    *   `src/routes` mencocokkan URL.
+    *   `authMiddleware` memvalidasi JWT. Jika tidak valid, langsung dikembalikan sebagai error 401.
+3.  **Controller (Entry Point):** `src/controllers` menerima data dari request, melakukan validasi dasar, lalu memanggil fungsi di Service yang sesuai.
+4.  **Service (Business Logic):** `src/services` berisi logika bisnis utama (misal: menghitung sisa saldo sebelum mengizinkan pengeluaran). Service adalah satu-satunya bagian yang berkomunikasi dengan Prisma.
+5.  **Prisma & Database:** `lib/prisma.js` melakukan operasi baca/tulis ke PostgreSQL.
+6.  **Output (Response):** 
+    *   Jika berhasil: Controller mengirimkan data dengan status 200/201.
+    *   Jika gagal: `asyncHandler` menangkap error dan mengirimkannya ke `errorMiddleware` untuk menghasilkan format error JSON yang seragam (misal: `{ "error": "message" }`).
+
+
+## 🛠️ Langkah Pengembangan (Development Steps)
+
+Berikut adalah urutan langkah yang dilakukan dalam membangun proyek ini:
+
+1.  **Inisialisasi Proyek:**
+    *   Setup folder proyek dan inisialisasi `npm`.
+    *   Instalasi dependency utama: `express`, `prisma`, `jsonwebtoken`, `bcrypt`, dan `dotenv`.
+
+2.  **Konfigurasi Database & ORM:**
+    *   Inisialisasi Prisma dengan `npx prisma init`.
+    *   Mendefinisikan skema data (`User`, `Transaction`, `SavingsGoal`, `Reminder`, `TransactionCategory`) di `prisma/schema.prisma`.
+    *   Melakukan migrasi awal ke PostgreSQL: `npx prisma migrate dev --name init`.
+
+3.  **Pembangunan Infrastruktur Dasar:**
+    *   Membuat *error handling* global menggunakan `error.middleware.js` dan `asyncHandler.js`.
+    *   Setup koneksi database tunggal di `lib/prisma.js`.
+    *   Membuat middleware autentikasi JWT (`auth.middleware.js`).
+
+4.  **Pengembangan Modul (Auth, Transaction, Savings, Reminder):**
+    *   **Service Layer:** Menulis logika bisnis di `src/services/` (misal: validasi saldo, perhitungan tabungan).
+    *   **Controller Layer:** Menangani request/response di `src/controllers/`.
+    *   **Routing:** Menghubungkan endpoint dengan controller di `src/routes/`.
+
+5.  **Implementasi Fitur Otomatisasi:**
+    *   Membuat *background job* di `src/jobs/autoSavings.job.js` menggunakan `node-cron`.
+    *   Setup endpoint internal untuk pemicu cron manual/Vercel Cron.
+
+6.  **Pengujian (Testing):**
+    *   Menulis unit test menggunakan **Jest** di folder `__tests__/` untuk memastikan logika transaksi dan kategori berjalan sesuai ekspektasi.
+    *   Menjalankan test dengan `npm test`.
+
+7.  **Deployment Persiapan:**
+    *   Konfigurasi `vercel.json` untuk deployment serverless.
+    *   Setup script `postinstall` untuk memastikan Prisma Client digenerate otomatis di lingkungan production.
+
+## 🎯 Hasil Akhir Proyek (Final Results)
+
+Setelah melewati tahap pengembangan dan pengujian, proyek ini menghasilkan sistem backend yang:
+
+1.  **API Berstandar Industri:** Menyediakan REST API dengan respon JSON yang konsisten, penanganan *error* yang informatif, dan keamanan berbasis token (JWT).
+2.  **Dokumentasi Interaktif (`/docs`):** Halaman dokumentasi yang memudahkan pengembang frontend untuk mencoba setiap endpoint secara langsung tanpa alat tambahan (seperti Postman).
+3.  **Automasi Tabungan Berjalan Sempurna:** Fitur *Auto-Savings* berhasil memproses penambahan saldo tabungan secara otomatis setiap hari sesuai pengaturan user, baik di server tradisional maupun *serverless* (Vercel Cron).
+4.  **Integritas Data Terjamin:** Database PostgreSQL yang dikelola Prisma memastikan relasi antara User, Transaksi, dan Tabungan tetap konsisten dan aman.
+5.  **Siap Produksi (Production Ready):** Teroptimasi untuk dideploy ke platform modern seperti Vercel atau Railway dengan konfigurasi variabel lingkungan yang fleksibel.
+
+**Contoh Output Transaksi Sukses:**
+```json
+{
+  "id": "uuid-123",
+  "title": "Gaji Bulanan",
+  "amount": "5000000.00",
+  "type": "income",
+  "category": "Salary",
+  "date": "2026-03-06T00:00:00.000Z",
+  "note": "Pemasukan rutin",
+  "createdAt": "2026-03-06T10:00:00.000Z"
+}
 ```
 
 ## Environment Variables
