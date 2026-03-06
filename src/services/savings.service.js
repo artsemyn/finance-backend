@@ -1,23 +1,33 @@
 const prisma = require('../../lib/prisma')
 
 exports.createGoal = async (data, userId) => {
-    if (!data.title || !data.targetAmount || !data.deadline) {
-        const error = new Error('Title, target amount, and deadline are required')
+    if (!data.title || data.targetAmount === undefined || data.targetAmount === null) {
+        const error = new Error('Title and target amount are required')
         error.status = 400
         throw error
     }
 
-    if (data.autoSaveDay && (data.autoSaveDay < 1 || data.autoSaveDay > 28)) {
+    if (data.autoSaveDay !== undefined && data.autoSaveDay !== null && (data.autoSaveDay < 1 || data.autoSaveDay > 28)) {
     const error = new Error("autoSaveDay must be between 1 and 28")
     error.status = 400
     throw error
+    }
+
+    let parsedDeadline = null
+    if (data.deadline !== undefined && data.deadline !== null && data.deadline !== "") {
+        parsedDeadline = new Date(data.deadline)
+        if (Number.isNaN(parsedDeadline.getTime())) {
+            const error = new Error("deadline must be a valid date")
+            error.status = 400
+            throw error
+        }
     }
 
     return prisma.savingsGoal.create({
         data:
         {
             ...data,
-            deadline: new Date(data.deadline),
+            deadline: parsedDeadline,
             userId,
         }
     })

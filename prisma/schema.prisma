@@ -35,7 +35,7 @@ model SavingsGoal {
   title         String
   targetAmount  Float
   currentAmount Float    @default(0)
-  deadline      DateTime
+  deadline      DateTime?
   userId        String
   createdAt     DateTime @default(now())
   autoSaveDay   Int?

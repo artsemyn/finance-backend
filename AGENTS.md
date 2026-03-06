@@ -60,6 +60,9 @@ Any agent that modifies repository files must record the change in this file bef
 - If no files are changed, no log entry is required.
 
 ## Change Log
+- 2026-03-06 | Codex | `src/__tests__/savings.service.test.js`, `AGENTS.md` | Added Jest unit tests for savings service covering create/get/update/delete validations and optional deadline behavior.
+- 2026-03-06 | Codex | `prisma/migrations/20260225071519_change_amount_type_to_decimal_and_add_category_table/migration.sql`, `AGENTS.md` | Fixed broken migration ordering by making TransactionCategory FK/index operations conditional so shadow DB migration no longer fails when table is not yet created.
+- 2026-03-06 | Codex | `src/services/savings.service.js`, `prisma/schema.prisma`, `prisma/migrations/20260306090000_make_savings_deadline_optional/migration.sql`, `AGENTS.md` | Made savings goal deadline optional by updating create validation and Prisma schema plus a migration to drop NOT NULL on `SavingsGoal.deadline`.
 - 2026-03-01 | Codex | `src/app.js`, `public/index.html`, `AGENTS.md` | Removed public static file serving and deleted the `/docs` HTML page.
 - 2026-03-01 | Vade | `src/app.js`, `public/index.html`, `package.json`, `package-lock.json`, `README.md`, `AGENTS.md` | Added Vercel Web Analytics support with interactive documentation page at `/docs` endpoint, static file serving, and updated documentation.
 - 2026-03-01 | Codex | `src/controllers/auth.controller.js`, `AGENTS.md` | Updated `/auth/register` to return a JWT token for immediate post-registration login and removed the hashed password from the register response.
